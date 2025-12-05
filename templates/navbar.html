@@ -1,0 +1,58 @@
+<nav class="navbar">
+    <div class="navbar-container">
+        <a href="{% url 'blog:home' %}" class="navbar-brand">
+            <span style="background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Advanced</span>
+            <span>Blog</span>
+        </a>
+        
+        <button class="navbar-toggler" aria-label="Toggle navigation">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        
+        <ul class="navbar-nav">
+            <li><a href="{% url 'blog:home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
+            
+            {% if user.is_authenticated %}
+                {% if user.is_superuser or user.groups.all.0.name == 'Admin' or user.groups.all.0.name == 'Author' %}
+                <li><a href="{% url 'blog:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a></li>
+                {% endif %}
+                {% if user.is_superuser or user.groups.all.0.name == 'Admin' %}
+                <li><a href="{% url 'blog:comment_moderation' %}" class="nav-link">Moderate</a></li>
+                {% endif %}
+            {% endif %}
+            
+            <!-- Search Bar -->
+            <li class="navbar-search">
+                <form method="get" action="{% url 'blog:home' %}" style="display: flex; align-items: center; gap: var(--spacing-xs);">
+                    <input type="search" name="q" placeholder="Search posts..." value="{{ request.GET.q }}" style="margin: 0;">
+                    <button type="submit" aria-label="Search">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                    </button>
+                </form>
+            </li>
+            
+            {% if user.is_authenticated %}
+                <li class="user-dropdown">
+                    <div class="dropdown-toggle">
+                        <span>{{ user.username }}</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="m6 9 6 6 6-6"></path>
+                        </svg>
+                    </div>
+                    <div class="dropdown-menu">
+                        <a href="{% url 'accounts:profile' %}" class="dropdown-item">Profile</a>
+                        <a href="{% url 'accounts:logout' %}" class="dropdown-item">Logout</a>
+                    </div>
+                </li>
+            {% else %}
+                <li><a href="{% url 'accounts:login' %}" class="nav-link">Login</a></li>
+                <li><a href="{% url 'accounts:register' %}" class="btn btn-primary btn-sm">Sign Up</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>

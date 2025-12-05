@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if object %}Edit{% else %}Create{% endif %} Post - Advanced Blog{% endblock %}
+
+{% block extra_css %}
+{{ form.media }}
+<link rel="stylesheet" href="{% static 'css/pages/post_form.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="post-form-container">
+    <div class="post-form-card">
+        <div class="post-form-header">
+            <h1 class="post-form-title">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                {% if object %}Edit Post{% else %}Create New Post{% endif %}
+            </h1>
+        </div>
+        
+        <div class="post-form-body">
+            <form method="post" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                    <div class="alert alert-error" style="margin-bottom: var(--spacing-xl);">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <!-- Title -->
+                <div class="form-group">
+                    <label for="{{ form.title.id_for_label }}" class="form-label required">Title</label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                        <span class="form-error">{{ form.title.errors }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Content -->
+                <div class="form-group">
+                    <label for="{{ form.content.id_for_label }}" class="form-label required">Content</label>
+                    {{ form.content }}
+                    {% if form.content.errors %}
+                        <span class="form-error">{{ form.content.errors }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Category and Status Row -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-lg);">
+                    <!-- Category -->
+                    <div class="form-group">
+                        <label for="{{ form.category.id_for_label }}" class="form-label">Category</label>
+                        <div class="category-select-wrapper">
+                            {{ form.category }}
+                        </div>
+                        {% if form.category.errors %}
+                            <span class="form-error">{{ form.category.errors }}</span>
+                        {% endif %}
+                        <span class="form-text">Choose a category that best fits your post</span>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="form-group">
+                        <label for="{{ form.status.id_for_label }}" class="form-label required">Status</label>
+                        {{ form.status }}
+                        {% if form.status.errors %}
+                            <span class="form-error">{{ form.status.errors }}</span>
+                        {% endif %}
+                        <span class="form-text">Draft: Save for later | Published: Make it live</span>
+                    </div>
+                </div>
+
+                <!-- Tags -->
+                <div class="form-group">
+                    <label for="{{ form.tags.id_for_label }}" class="form-label">Tags</label>
+                    <div class="tags-select-wrapper">
+                        {{ form.tags }}
+                    </div>
+                    {% if form.tags.errors %}
+                        <span class="form-error">{{ form.tags.errors }}</span>
+                    {% endif %}
+                    <span class="form-text">
+                        <strong>Tip:</strong> Hold <strong>Ctrl</strong> (Windows) or <strong>Cmd</strong> (Mac) to select multiple tags. 
+                        Choose tags that describe your post content.
+                    </span>
+                </div>
+
+                <!-- Featured Image -->
+                <div class="form-group">
+                    <label for="{{ form.image.id_for_label }}" class="form-label">Featured Image</label>
+                    {{ form.image }}
+                    {% if form.image.errors %}
+                        <span class="form-error">{{ form.image.errors }}</span>
+                    {% endif %}
+                    {% if object and object.image %}
+                    <div class="image-preview">
+                        <p>Current image:</p>
+                        <img src="{{ object.image.url }}" alt="Current featured image">
+                    </div>
+                    {% endif %}
+                    <span class="form-text">Upload a featured image for your post (optional, recommended size: 1200x630px)</span>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <a href="{% url 'blog:dashboard' %}" class="btn-cancel">Cancel</a>
+                    <button type="submit" class="btn-submit">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 6L9 17l-5-5"></path>
+                        </svg>
+                        {% if object %}Update Post{% else %}Create Post{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
